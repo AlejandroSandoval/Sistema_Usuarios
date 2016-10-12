@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `ROL`
 	`nomb_role` VARCHAR(25) NOT NULL,
 	`desc_role` VARCHAR(250) NOT NULL,
 	`esta_role` INT NOT NULL,
+	UNIQUE(nomb_role),
 	PRIMARY KEY(codi_role)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `PAGINA`
 	`nomb_pagi` VARCHAR(25) NOT NULL,
 	`desc_pagi` VARCHAR(250) NOT NULL,
 	`esta_pagi` INT NOT NULL,
+	UNIQUE(nomb_pagi),
 	PRIMARY KEY(codi_pagi)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -56,6 +58,14 @@ CREATE TABLE IF NOT EXISTS `BITACORA`
 	`fech_bita` datetime NOT NULL,
 	`regi_bita` INT NOT NULL,
 	PRIMARY KEY(codi_bita)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `APPLOG`(
+DATED   varchar(50)    NOT NULL,
+LOGGER  VARCHAR(50)    NOT NULL,
+LEVEL   VARCHAR(10)    NOT NULL,
+MESSAGE VARCHAR(1000)  NOT NULL
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

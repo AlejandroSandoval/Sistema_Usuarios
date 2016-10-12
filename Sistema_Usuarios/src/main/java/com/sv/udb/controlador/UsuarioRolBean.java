@@ -34,6 +34,7 @@ public class UsuarioRolBean implements Serializable {
     private GlobalAppBean globalAppBean; //Bean de aplicación
     
     private UsuarioRol objeUsuaRole;
+    private UsuarioRol objeVali;
     private List<UsuarioRol> listUsuaRole;
     private List<UsuarioRol> listUsua;
     private boolean guardar;
@@ -47,6 +48,10 @@ public class UsuarioRolBean implements Serializable {
         this.objeUsuaRole = objeUsuaRole;
     }
 
+    public void setObjeVali(UsuarioRol objeVali) {
+        this.objeVali = objeVali;
+    }
+    
     public List<UsuarioRol> getListUsuaRole() {
         return listUsuaRole;
     }
@@ -80,22 +85,36 @@ public class UsuarioRolBean implements Serializable {
         this.guardar = true;        
     }
     
+    public boolean valiUsuaRole()
+    {
+        boolean resp = true;
+        this.objeVali = FCDEUsuaRole.findByAcceAndRol(this.objeUsuaRole.getAcceUsua(), this.objeUsuaRole.getCodiRole());
+        if(this.objeVali != null)
+            resp = (this.objeVali.getCodiUsuaRole() == this.objeUsuaRole.getCodiUsuaRole()) ? true : false;
+        return resp;
+    }
+    
     public void guar()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.objeUsuaRole.setContUsua("prueba");
-            FCDEUsuaRole.create(this.objeUsuaRole);
-            this.listUsuaRole.add(this.objeUsuaRole);
-            this.guardar = false;
-            log.info("Usuariorol creado: "+this.objeUsuaRole.getAcceUsua()+" - "+this.objeUsuaRole.getCodiRole().getNombRole());
-            //this.limpForm(); //Omito para mantener los datos en la modal
-            ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
+            if(valiUsuaRole()){
+                this.objeUsuaRole.setContUsua("prueba");
+                FCDEUsuaRole.create(this.objeUsuaRole);
+                this.listUsuaRole.add(this.objeUsuaRole);
+                this.guardar = false;
+//                log.info("Usuariorol creado: "+this.objeUsuaRole.getAcceUsua()+" - "+this.objeUsuaRole.getCodiRole().getNombRole());
+                //this.limpForm(); //Omito para mantener los datos en la modal
+                ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
+            }
+            else
+               ctx.execute("setMessage('MESS_WARN', 'Atención', 'Datos ya registrados')"); 
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al guardar ')");
+            ex.printStackTrace();
             log.error("Error creando Usuariorol: "+getRootCause(ex).getMessage());
         }
         finally
@@ -109,11 +128,15 @@ public class UsuarioRolBean implements Serializable {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.listUsuaRole.remove(this.objeUsuaRole); //Limpia el objeto viejo
-            FCDEUsuaRole.edit(this.objeUsuaRole);
-            this.listUsuaRole.add(this.objeUsuaRole); //Agrega el objeto modificado
-            log.info("Usuariorol modificado: "+this.objeUsuaRole.getCodiUsuaRole());
-            ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
+            if(valiUsuaRole()){
+                this.listUsuaRole.remove(this.objeUsuaRole); //Limpia el objeto viejo
+                FCDEUsuaRole.edit(this.objeUsuaRole);
+                this.listUsuaRole.add(this.objeUsuaRole); //Agrega el objeto modificado
+                log.info("Usuariorol modificado: "+this.objeUsuaRole.getCodiUsuaRole());
+                ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
+            }
+            else
+               ctx.execute("setMessage('MESS_WARN', 'Atención', 'Datos ya registrados')"); 
         }
         catch(Exception ex)
         {

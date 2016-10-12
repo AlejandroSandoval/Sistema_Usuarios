@@ -26,6 +26,8 @@ public interface UsuarioRolFacadeLocal {
     
     UsuarioRol findByAcceAndCont(Object acce, Object cont);
     
+    UsuarioRol findByAcceAndRol(Object acce, Object codiRole);
+    
     List<UsuarioRol> findByAcce(Object acce);
     
      List<UsuarioRol> findByAcceOnly();

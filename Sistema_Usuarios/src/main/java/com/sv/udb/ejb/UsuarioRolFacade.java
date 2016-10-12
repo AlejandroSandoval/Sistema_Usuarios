@@ -58,4 +58,13 @@ public class UsuarioRolFacade extends AbstractFacade<UsuarioRol> implements Usua
         List resu = q.getResultList();
         return resu;
     }
+    
+    @Override
+    public UsuarioRol findByAcceAndRol(Object acce, Object codiRole) {
+        Query q = getEntityManager().createQuery("SELECT u FROM UsuarioRol u WHERE u.acceUsua = :acceUsua AND u.codiRole = :codiRole", UsuarioRol.class);        
+        q.setParameter("acceUsua", acce);
+        q.setParameter("codiRole", codiRole);
+        List resu = q.getResultList();
+        return resu.isEmpty() ? null : (UsuarioRol)resu.get(0);
+    }
 }
