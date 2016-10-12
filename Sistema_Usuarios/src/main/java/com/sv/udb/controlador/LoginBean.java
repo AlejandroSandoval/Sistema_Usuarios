@@ -5,12 +5,14 @@
  */
 package com.sv.udb.controlador;
 
+import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
 import com.sv.udb.ejb.PermisoFacadeLocal;
 import com.sv.udb.ejb.UsuarioRolFacadeLocal;
 import com.sv.udb.modelo.Pagina;
 import com.sv.udb.modelo.Permiso;
 import com.sv.udb.modelo.Rol;
 import com.sv.udb.modelo.UsuarioRol;
+import com.sv.udb.utils.LOG4J;
 import com.sv.udb.utils.Notificacion;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -45,16 +47,16 @@ public class LoginBean implements Serializable {
     private GlobalAppBean globalAppBean; //Bean de aplicación
     
     private UsuarioRol objeUsua;
-    private Pagina objePagi;
     private Permiso objePerm;
     private boolean loge;
     private String usua;
     private String cont;
     private String imagPerf;
     private List<Notificacion> listNoti;//Lista de Notificaciones
-    private List<UsuarioRol> listusua;
-    private List<Permiso> listperm;
-    private List<Permiso> listpermprue;
+    private List<UsuarioRol> listUsua;
+    private List<Permiso> listPerm;
+    private List<Permiso> listPermOnly;
+    private LOG4J log;
 
     public LoginBean() {
     }
@@ -62,7 +64,8 @@ public class LoginBean implements Serializable {
     @PostConstruct
     public void init()
     {
-        
+        log = new LOG4J();
+        log.debug("Se inicializo el Login");
     }
 
     public UsuarioRol getObjeUsua() {
@@ -71,14 +74,6 @@ public class LoginBean implements Serializable {
 
     public void setObjeUsua(UsuarioRol objeUsua) {
         this.objeUsua = objeUsua;
-    }
-
-    public Pagina getObjePagi() {
-        return objePagi;
-    }
-
-    public void setObjePagi(Pagina objePagi) {
-        this.objePagi = objePagi;
     }
     
     public boolean isLoge() {
@@ -109,12 +104,12 @@ public class LoginBean implements Serializable {
         return listNoti;
     }
 
-    public List<Permiso> getListperm() {
-        return listperm;
+    public List<Permiso> getListPerm() {
+        return listPerm;
     }
 
-    public void setListpermprue(List<Permiso> listpermprue) {
-        this.listpermprue = listpermprue;
+    public List<Permiso> getListPermOnly() {
+        return listPermOnly;
     }
 
     public Permiso getObjePerm() {
@@ -124,8 +119,6 @@ public class LoginBean implements Serializable {
     public void setObjePerm(Permiso objePerm) {
         this.objePerm = objePerm;
     }
-    
-    
     
     public void creaSess()
     {
@@ -137,6 +130,7 @@ public class LoginBean implements Serializable {
             this.objeUsua = FCDEUsuaRole.findByAcceAndCont(this.usua, this.cont);
             if(this.objeUsua != null)
             {
+                log.info("Incio de Sesion : "+this.objeUsua.getAcceUsua());
                 ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Bienvenido)"); //No se muestra porque redirecciona
                 this.loge = true;
                 //Cargar una imagen de usuario (Puede ser de una BD)
@@ -151,18 +145,16 @@ public class LoginBean implements Serializable {
                 this.listNoti.add(new Notificacion("Notificación 6", false));
                 this.listNoti.add(new Notificacion("Notificación 7", false));
                 this.listNoti.add(new Notificacion("Notificación 8", false));
-                this.listusua = FCDEUsuaRole.findByAcce(this.usua);
-                this.listperm = new ArrayList<>();
-                for(UsuarioRol temp : listusua){
-                    this.listpermprue = FCDEPermiso.findByRole(temp.getCodiRole());
-                    if(listpermprue != null){
-                    for(Permiso temp1 : listpermprue){
-                        this.listperm.add(temp1);
+                this.listUsua = FCDEUsuaRole.findByAcce(this.usua);
+                this.listPerm = new ArrayList<>();
+                for(UsuarioRol temp : listUsua){
+                    this.listPermOnly = FCDEPermiso.findByRole(temp.getCodiRole());
+                    if(listPermOnly != null){
+                    for(Permiso temp1 : listPermOnly){
+                        this.listPerm.add(temp1);
                     }
                     }
                 }
-                System.out.println(""+listperm);
-                //Redireccionar
                 facsCtxt.getExternalContext().redirect(globalAppBean.getUrl("index.xhtml"));
             }
             else
@@ -174,6 +166,7 @@ public class LoginBean implements Serializable {
         {
             ex.printStackTrace();
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al logear')");
+            log.error("Error iniciando Sesion: "+getRootCause(ex).getMessage());
         }
         finally
         {
@@ -190,11 +183,13 @@ public class LoginBean implements Serializable {
         try
         {
             facsCtxt.getExternalContext().invalidateSession();
+            log.info("Sesion finalizada: "+this.objeUsua.getAcceUsua());
             facsCtxt.getExternalContext().redirect(globalAppBean.getUrl("login.xhtml")); 
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al finalizar la sesión')");
+            log.error("Error cerrando Sesion: "+getRootCause(ex).getMessage());
         }
         finally
         {

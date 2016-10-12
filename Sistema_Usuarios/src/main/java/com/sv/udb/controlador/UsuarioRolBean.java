@@ -5,13 +5,13 @@
  */
 package com.sv.udb.controlador;
 
+import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
 import com.sv.udb.ejb.UsuarioRolFacadeLocal;
 import com.sv.udb.modelo.UsuarioRol;
-import com.sv.udb.utils.Notificacion;
+import com.sv.udb.utils.LOG4J;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -35,8 +35,9 @@ public class UsuarioRolBean implements Serializable {
     
     private UsuarioRol objeUsuaRole;
     private List<UsuarioRol> listUsuaRole;
-    private List<UsuarioRol> listUsuar;
+    private List<UsuarioRol> listUsua;
     private boolean guardar;
+    private LOG4J log;
 
     public UsuarioRol getObjeUsuaRole() {
         return objeUsuaRole;
@@ -54,8 +55,8 @@ public class UsuarioRolBean implements Serializable {
         return guardar;
     }
 
-    public List<UsuarioRol> getListUsuar() {
-        return listUsuar;
+    public List<UsuarioRol> getListUsua() {
+        return listUsua;
     }
     
     
@@ -69,6 +70,8 @@ public class UsuarioRolBean implements Serializable {
     {
         this.limpForm();
         this.consTodo();
+        log = new LOG4J();
+        log.debug("Se inicializa el modelo de UsuarioRol");
     }
     
     public void limpForm()
@@ -86,12 +89,14 @@ public class UsuarioRolBean implements Serializable {
             FCDEUsuaRole.create(this.objeUsuaRole);
             this.listUsuaRole.add(this.objeUsuaRole);
             this.guardar = false;
+            log.info("Usuariorol creado: "+this.objeUsuaRole.getAcceUsua()+" - "+this.objeUsuaRole.getCodiRole().getNombRole());
             //this.limpForm(); //Omito para mantener los datos en la modal
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al guardar ')");
+            log.error("Error creando Usuariorol: "+getRootCause(ex).getMessage());
         }
         finally
         {
@@ -107,32 +112,13 @@ public class UsuarioRolBean implements Serializable {
             this.listUsuaRole.remove(this.objeUsuaRole); //Limpia el objeto viejo
             FCDEUsuaRole.edit(this.objeUsuaRole);
             this.listUsuaRole.add(this.objeUsuaRole); //Agrega el objeto modificado
+            log.info("Usuariorol modificado: "+this.objeUsuaRole.getCodiUsuaRole());
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al modificar ')");
-        }
-        finally
-        {
-            
-        }
-    }
-    
-    public void elim()
-    {
-        RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
-        try
-        {
-            this.objeUsuaRole.setEstaUsuaRole(0);
-            FCDEUsuaRole.edit(this.objeUsuaRole);
-            this.listUsuaRole.remove(this.objeUsuaRole);
-            this.limpForm();
-            ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Eliminados')");
-        }
-        catch(Exception ex)
-        {
-            ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al eliminar')");
+            log.error("Error modificando Usuariorol: "+getRootCause(ex).getMessage());
         }
         finally
         {
@@ -145,7 +131,7 @@ public class UsuarioRolBean implements Serializable {
         try
         {
             this.listUsuaRole = FCDEUsuaRole.findAll();
-            this.listUsuar = FCDEUsuaRole.findByAcceOnly();
+            this.listUsua = FCDEUsuaRole.findByAcceOnly();
         }
         catch(Exception ex)
         {
@@ -171,6 +157,7 @@ public class UsuarioRolBean implements Serializable {
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al consultar')");
+            log.error("Error consultando Usuariorol: "+getRootCause(ex).getMessage());
         }
         finally
         {

@@ -5,8 +5,10 @@
  */
 package com.sv.udb.controlador;
 
+import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
 import com.sv.udb.ejb.RolFacadeLocal;
 import com.sv.udb.modelo.Rol;
+import com.sv.udb.utils.LOG4J;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.ManagedBean;
@@ -32,6 +34,7 @@ public class RolBean implements Serializable {
     private List<Rol> listRole;
     private Rol objeRole;
     private boolean guardar;
+    private LOG4J log;
     
     public RolFacadeLocal getFCDERoles() {
         return FCDERoles;
@@ -69,6 +72,8 @@ public class RolBean implements Serializable {
     {
         this.listRole = FCDERoles.findAll();
         this.limpForm();
+        log = new LOG4J();
+        log.debug("Se inicializa el modelo de Rol");
     }
     
     public void limpForm()
@@ -84,13 +89,14 @@ public class RolBean implements Serializable {
         {
             FCDERoles.create(this.objeRole);
             this.listRole.add(this.objeRole);
-            this.limpForm();
             this.guardar = false;
+            log.info("Rol creado: "+this.objeRole.getNombRole());
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al guardar ')");
+            log.error("Error creando rol: "+getRootCause(ex).getMessage());
         }
         finally
         {
@@ -106,11 +112,13 @@ public class RolBean implements Serializable {
             this.listRole.remove(this.objeRole); //Limpia el objeto viejo
             FCDERoles.edit(this.objeRole);
             this.listRole.add(this.objeRole); //Agrega el objeto modificado
+            log.info("Rol modificado: "+this.objeRole.getCodiRole());
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al modificar ')");
+            log.error("Error modificando rol: "+getRootCause(ex).getMessage());
         }
         finally
         {

@@ -5,8 +5,10 @@
  */
 package com.sv.udb.controlador;
 
+import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
 import com.sv.udb.ejb.PermisoFacadeLocal;
 import com.sv.udb.modelo.Permiso;
+import com.sv.udb.utils.LOG4J;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +33,8 @@ public class PermisoBean implements Serializable {
     private Permiso objePerm;
     private List<Permiso> listPerm;
     private boolean guardar;
-    
     private List<String> valores;
+    private LOG4J log;
     
     public Permiso getObjePerm() {
         return objePerm;
@@ -78,6 +80,8 @@ public class PermisoBean implements Serializable {
         this.valores = new ArrayList<>();
         this.limpForm();
         this.consTodo();
+        log = new LOG4J();
+        log.debug("Se inicializa el modelo de Permiso");
     }
     
     public void limpForm()
@@ -142,12 +146,14 @@ public class PermisoBean implements Serializable {
             this.objePerm.setValoPerm(getValoSuma());
             FCDEPermiso.create(this.objePerm);
             this.listPerm.add(this.objePerm);
+            log.info("Permiso creado: "+this.objePerm.getCodiRole().getNombRole()+" - "+this.objePerm.getValoPerm());
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
             this.limpForm();
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al guardar ')");
+            log.error("Error creando Permiso: "+getRootCause(ex).getMessage());
         }
         finally
         {
@@ -164,31 +170,13 @@ public class PermisoBean implements Serializable {
             this.listPerm.remove(this.objePerm); //Limpia el objeto viejo
             FCDEPermiso.edit(this.objePerm);
             this.listPerm.add(this.objePerm); //Agrega el objeto modificado
+            log.info("Permiso modificado: "+this.objePerm.getCodiPerm());
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
         }
         catch(Exception ex)
         {
             ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al modificar ')");
-        }
-        finally
-        {
-            
-        }
-    }
-    
-    public void elim()
-    {
-        RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
-        try
-        {
-            FCDEPermiso.remove(this.objePerm);
-            this.listPerm.remove(this.objePerm);
-            ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Eliminados')");
-            this.limpForm();
-        }
-        catch(Exception ex)
-        {
-            ctx.execute("setMessage('MESS_ERRO', 'Atención', 'Error al eliminar')");
+            log.error("Error modificando Permiso: "+getRootCause(ex).getMessage());
         }
         finally
         {

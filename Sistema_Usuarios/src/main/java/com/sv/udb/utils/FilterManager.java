@@ -60,8 +60,8 @@ public class FilterManager implements Filter {
         ignoPageFilt.add(nombCtxt + "otra.xhtml");
         this.logiBean = this.logiBean != null ? this.logiBean : new LoginBean();
         //System.err.println("Usted está navegando a: " + page);
-        if(this.logiBean.getListperm() != null){
-            for(Permiso temp : logiBean.getListperm())
+        if(this.logiBean.getListPerm()!= null){
+            for(Permiso temp : logiBean.getListPerm())
             {
                 accePage.add(nombCtxt + temp.getCodiPagi().getNombPagi() + ".xhtml");
             }
@@ -84,7 +84,7 @@ public class FilterManager implements Filter {
                      if(accePage.contains(page)){
                         String pageArray[] = page.split("/|\\.");
                         p = pageArray[3];
-                        for(Permiso temp : logiBean.getListperm())
+                        for(Permiso temp : logiBean.getListPerm())
                         {
                             if(temp.getCodiPagi().getNombPagi().equals(p)){
                                 this.logiBean.setObjePerm(temp);
