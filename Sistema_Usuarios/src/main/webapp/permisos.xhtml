@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" 
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="WEB-INF/resources/fragmentos/comun.xhtml">
+        <!-- Título de la página -->
+        <ui:param name="pageTitl" value="::: Permisos :::"/>
+        <ui:param name="pageNomb" value="Página Permisos"/>
+        <ui:param name="pageDesc" value="Asignacion de permisos"/>
+        <!-- Activar el link del menú -->
+        <ui:param name="actiMenu1" value="active"/>
+        <ui:param name="actiAlumnos" value="active"/>
+        <!-- Scripts personalizados -->
+        <ui:define name="CustomScripts">
+        <!--Plugins Selector de Fecha-->
+        <h:outputStylesheet library="css" name="datepicker3.css"/>
+        <h:outputScript library="js" name="bootstrap-datepicker.js"/>
+        <h:outputScript library="js" name="bootstrap-datepicker.es.js"/>
+        <!--Plugins Select-->
+        <h:outputStylesheet library="css" name="bootstrap-select.css"/>
+        <h:outputScript library="js" name="bootstrap-select.js"/>
+        <!--Plugins custom-->
+            <h:outputScript library="js" name="custom/mantenimientos.js"/>
+        </ui:define>
+        <!-- Elementos propios del boby -->
+        <ui:define name="body">
+        <style>
+            .field-error
+            {
+                color: #a94442; 
+                display: inline;
+                font-size: 10px;
+            }
+            .field-error:first-letter
+            {
+                text-transform: capitalize;
+                color: #003399;
+            }
+            .form-group
+            {
+                margin-bottom: 5px !important;
+            }
+            .bootstrap-select > .btn {
+                padding-top: 2px;
+                padding-bottom: 2px;
+            }
+        </style>
+            <div class="row">
+                <div class="col-md-12 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Tabla de Datos</div>
+                        <div class="panel-body">
+                            <h:panelGroup id="ContRegi">
+                                <div id="toolTablRegi">
+                                    <h:form>
+                                        <!--Form exclusivo para los remotos-->
+                                        <p:remoteCommand name="cons" actionListener="#{permisoBean.cons()}" update=":FormRegi" 
+                                                         oncomplete="$('#ModaFormRegi').modal('show');" global="true"/>
+                                        <p:remoteCommand name="elimAlum" actionListener="#{permisoBean.elim()}" update=":FormRegi :ContRegi" 
+                                                         oncomplete="INIT_OBJE();" global="true"/>
+                                        <h:panelGroup rendered="#{loginBean.objePerm.valoPerm eq '1' or loginBean.objePerm.valoPerm eq '3' or loginBean.objePerm.valoPerm eq '5' or loginBean.objePerm.valoPerm eq '7'}">
+                                            <h:commandLink id="btonNuev" class="btn btn-success">
+                                                <p:ajax listener="#{permisoBean.limpForm()}" update=":FormRegi" global="true" 
+                                                        oncomplete="$('#ModaFormRegi').modal('show');"/>
+                                                <i class="fa fa-plus"/> Nuevo
+                                            </h:commandLink>
+                                        </h:panelGroup>
+                                    </h:form>
+                                </div>
+                                <h:dataTable pt:data-id="TablRegi" id="TablRegi" value="#{permisoBean.listPerm}"
+                                             var="fila" class="boottable" pt:data-toolbar="#toolTablAlum"
+                                             styleClass="table-hover table-bordered table-condensed table-striped table-responsive"
+                                             pt:data-show-refresh="false" pt:data-show-toggle="false" pt:data-show-columns="false" 
+                                             pt:data-search="true" pt:data-pagination="true" pt:data-page-list="[5, 10, 20, 50]"
+                                             pt:data-click-to-select="true"  pt:data-select-item-name="radio"
+                                             pt:data-single-select="true">                                
+                                    <h:column pt:data-field="state" pt:data-checkbox="true">
+                                    </h:column>
+                                    <h:column pt:data-align="right" pt:data-sortable="true" pt:data-field="id">
+                                        <f:facet name="header">Código</f:facet>
+                                        <h:outputText value="#{fila.codiPerm}"/>
+                                    </h:column>
+                                    <h:column pt:data-sortable="true" pt:data-field="nomb">
+                                        <f:facet name="header">Rol</f:facet>
+                                        <h:outputText value="#{fila.codiRole.nombRole}"/>   
+                                    </h:column>
+                                    <h:column pt:data-sortable="true">
+                                        <f:facet name="header">Página</f:facet>
+                                        <h:outputText value="#{fila.codiPagi.nombPagi}"/>   
+                                    </h:column>
+                                    <h:column pt:data-sortable="true">
+                                        <f:facet name="header">Permisos</f:facet>
+                                        <div>
+                                            <div style="display: inline-block">
+                                                <h:panelGroup class="label label-success" rendered="#{fila.valoPerm eq '0'}">
+                                                    Acceso a página
+                                                </h:panelGroup>
+                                            </div>
+                                            <div style="display: inline-block">
+                                                <h:panelGroup class="label label-success" rendered="#{fila.valoPerm eq '1' or fila.valoPerm eq '3' or fila.valoPerm eq '5'}">
+                                                    <i class="fa fa-save"/> Guardar
+                                                </h:panelGroup>
+                                            </div>
+                                            <div style="display: inline-block">
+                                                <h:panelGroup class="label label-primary" rendered="#{fila.valoPerm eq '2' or fila.valoPerm eq '3' or fila.valoPerm eq '6'}">
+                                                    <i class="fa fa-edit"/> Modificar
+                                                </h:panelGroup>
+                                            </div>
+                                            <div style="display: inline-block">
+                                                <h:panelGroup class="label label-success" rendered="#{fila.valoPerm eq '4' or fila.valoPerm eq '5' or fila.valoPerm eq '6'}">
+                                                    <i class="fa fa-lock"/> Cambiar estado
+                                                </h:panelGroup>
+                                            </div>
+                                            <div style="display: inline-block">
+                                                <h:panelGroup class="label label-success" rendered="#{fila.valoPerm eq '7'}">
+                                                    <i class="fa fa-unlock"/> Todos los permisos
+                                                </h:panelGroup>
+                                            </div>
+                                        </div>
+                                    </h:column>
+                                    <h:column pt:data-sortable="true">
+                                   <f:facet name="header">Estado asignación</f:facet> 
+                                   <h:panelGroup class="label label-success" rendered="#{fila.estaPerm eq '1'}">
+                                       <i class="fa fa-unlock"/> Activa</h:panelGroup>
+                                   <h:panelGroup class="label label-danger" rendered="#{fila.estaPerm ne '1'}">
+                                       <i class="fa fa-lock"/> Inactiva</h:panelGroup>
+                               </h:column>
+                                </h:dataTable>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Modal -->
+                <div id="ModaFormRegi" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <h:form id="FormRegi" class="form-horizontal">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"/></button>
+                                    <h4 class="modal-title">Gestión de Alumnos</h4>
+                                </div>
+                                <div class="modal-body" style="padding-top: 2px;">
+                                    <fieldset class="col-md-12">
+                                        <h:inputHidden id="codi" value="#{permisoBean.objePerm.codiPerm}" />
+                                        <div class="form-group input-group-xs">
+                                            <h:outputLabel  for="role" value="Rol:"/> 
+                                            <h:selectOneMenu id="role" value="#{permisoBean.objePerm.codiRole}" class="form-control">
+                                                <f:selectItem pt:data-hidden="true" itemLabel="Seleccione..."/>
+                                                <f:selectItems value="#{rolBean.listRole}" var="lst" itemLabel="#{lst.nombRole}" itemValue="#{lst}"/>
+                                                <f:converter converterId="PooConv"/>
+                                            </h:selectOneMenu>
+                                            <h:message for="role" errorClass="field-error" />
+                                        </div>
+                                        <div class="form-group input-group-xs">
+                                            <h:outputLabel  for="pagi" value="Página:"/> 
+                                            <h:selectOneMenu id="pagi" value="#{permisoBean.objePerm.codiPagi}" class="form-control">
+                                                <f:selectItem pt:data-hidden="true" itemLabel="Seleccione..."/>
+                                                <f:selectItems value="#{paginaBean.listPagi}" var="lst2" itemLabel="#{lst2.nombPagi}" itemValue="#{lst2}"/>
+                                                <f:converter converterId="PooConv"/>
+                                            </h:selectOneMenu>
+                                            <h:message for="pagi" errorClass="field-error" />
+                                        </div>
+                                        <div class="form-group input-group-xs">
+                                            <h:outputLabel  for="valo" value="El rol tendrá permisos para:"/> 
+                                            <h:selectManyCheckbox id="valo" value="#{permisoBean.valores}" layout="pageDirection">
+                                                <f:selectItem id="guarPerm" itemLabel=" Guardar" itemValue="1"/>
+                                                <f:selectItem id="modiPerm" itemLabel=" Modificar" itemValue="2"/>
+                                                <f:selectItem id="estaPerm" itemLabel=" Cambiar estado" itemValue="4"/>
+                                                <f:converter converterId="PooConv"/>
+                                            </h:selectManyCheckbox>
+                                            <h:message for="valo" errorClass="field-error" />
+                                        </div>
+                                        <div class="form-group input-group-xs">
+                                            <h:outputLabel  for="esta" value="Estado de la asignación:"/>
+                                            <h:selectOneMenu id="esta" value="#{permisoBean.objePerm.estaPerm}" class="form-control">
+                                                <f:selectItem pt:data-hidden="true" itemLabel="Seleccione..."/>
+                                                <f:selectItem itemValue="1" itemLabel="Activa"/>
+                                                <f:selectItem itemValue="0" itemLabel="Inactiva"/>
+                                            </h:selectOneMenu>
+                                            <h:message for="esta" errorClass="field-error" />
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="modal-footer">
+                                        <div class="input-group-btn right" style="padding-top: 5px;">
+                                            <div class="btn-group">
+                                                <h:commandLink id="btonCanc" class="btn btn-default" pt:data-dismiss="modal">
+                                                    <p:ajax listener="#{permisoBean.limpForm()}" process="@form" update="@form" global="true"/>
+                                                    <i class="fa fa-mail-forward"/> Cerrar
+                                                </h:commandLink>
+                                                <h:commandLink id="btonGuar" class="btn btn-success" rendered="#{permisoBean.guardar}">
+                                                    <p:ajax listener="#{permisoBean.guar()}" process="@form" update="@form :ContRegi" oncomplete="INIT_OBJE();" />
+                                                    <i class="fa fa-plus"/> Guardar
+                                                </h:commandLink>
+                                                <h:panelGroup rendered="#{loginBean.objePerm.valoPerm eq '1' or loginBean.objePerm.valoPerm eq '3' or loginBean.objePerm.valoPerm eq '5' or loginBean.objePerm.valoPerm eq '7'}">
+                                                    <h:commandLink id="btonNuev" class="btn btn-success" rendered="#{!permisoBean.guardar}">
+                                                        <p:ajax listener="#{permisoBean.limpForm()}" process="@form" update="@form" oncomplete="INIT_OBJE_MODA();" />
+                                                        <i class="fa fa-plus"/> Nuevo
+                                                    </h:commandLink>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{loginBean.objePerm.valoPerm eq '2' or loginBean.objePerm.valoPerm eq '3' or loginBean.objePerm.valoPerm eq '6' or loginBean.objePerm.valoPerm eq '7'}">
+                                                    <h:commandLink id="btonModi" class="btn btn-primary" rendered="#{!permisoBean.guardar}">
+                                                        <p:ajax listener="#{permisoBean.modi()}" process="@form" update="@form :ContRegi" oncomplete="INIT_OBJE();" />
+                                                        <i class="fa fa-edit"/> Modificar
+                                                    </h:commandLink>
+                                                </h:panelGroup>
+                                            </div>
+                                        </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
