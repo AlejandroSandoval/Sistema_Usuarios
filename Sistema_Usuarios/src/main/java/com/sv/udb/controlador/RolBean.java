@@ -20,14 +20,15 @@ import javax.faces.view.ViewScoped;
 import org.primefaces.context.RequestContext;
 
 /**
- *
- * @author aleso
+ * Esta clase se encarga de manejar lo relacionado al CRUD de roles
+ * @author: AGAV Team
+ * @version: Prototipo 1
  */
 @Named(value = "rolBean")
 @ViewScoped
 @ManagedBean
 public class RolBean implements Serializable {
-
+    //Campos de la clase
     @EJB
     private RolFacadeLocal FCDERoles;
    
@@ -35,6 +36,8 @@ public class RolBean implements Serializable {
     private Rol objeRole;
     private boolean guardar;
     private LOG4J log;
+    
+    //Encapsulamiento de los campos de la clase
     
     public RolFacadeLocal getFCDERoles() {
         return FCDERoles;
@@ -64,9 +67,15 @@ public class RolBean implements Serializable {
         return guardar;
     }
     
+    /**
+     * Constructor de la clase RolBean
+    */
     public RolBean() {
     }
     
+    /**
+    * Método que se ejecuta después de haber construido la clase e inicializa las variables
+    */
     @PostConstruct
     public void init()
     {
@@ -76,12 +85,18 @@ public class RolBean implements Serializable {
         log.debug("Se inicializa el modelo de Rol");
     }
     
+    /**
+     * Método que limpia el formulario reiniciando las variables
+     */
     public void limpForm()
     {
         this.objeRole = new Rol();
         this.guardar = true;        
     }
    
+    /**
+     * Método que guarda la información en la base de datos
+     */
     public void guar()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -104,6 +119,9 @@ public class RolBean implements Serializable {
         }
     }
     
+    /**
+     * Método que modifica la información en la base de datos
+     */
     public void modi()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -126,6 +144,9 @@ public class RolBean implements Serializable {
         }
     }
     
+    /**
+     * Método que consulta la información de la base de datos
+     */
     public void consTodo()
     {
         try
@@ -142,6 +163,9 @@ public class RolBean implements Serializable {
         }
     }
     
+    /**
+     * Método que consulta la información de un registro específico de la base de datos
+     */
     public void cons()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página

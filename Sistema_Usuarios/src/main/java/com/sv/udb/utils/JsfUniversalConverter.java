@@ -15,6 +15,16 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
+/**
+ *
+ * @author Mauricio González
+ * @version Prototipo 1
+ */
+
+/**
+ * El JsfUniversalConverter se encarga de convertir un determinado dato recibido en un objeto
+ */
 @FacesConverter("PooConv")
 public class JsfUniversalConverter implements Converter, Serializable {
 	/**
@@ -91,7 +101,7 @@ public class JsfUniversalConverter implements Converter, Serializable {
 	 *
 	 * @param fc
 	 *            Contexto de faces
-	 * @return Retorn el objeto del cache o lo crea
+	 * @return Retorna el objeto del cache o lo crea
 	 */
 	private Map<String, Object> getObjectCache(final FacesContext fc) {
 		HttpSession session = (HttpSession) fc.getExternalContext().getSession(

@@ -40,4 +40,14 @@ public class PermisoFacade extends AbstractFacade<Permiso> implements PermisoFac
         List resu = q.getResultList();
         return resu;
     }
+    
+    @Override
+    public Permiso findByRolePagi(Object role, Object pagi) {
+        Query q = getEntityManager().createQuery("SELECT p FROM Permiso p WHERE p.codiRole = :codiRole AND p.codiPagi = :codiPagi AND p.estaPerm = :estaPerm", Permiso.class);        
+        q.setParameter("codiRole", role);
+        q.setParameter("codiPagi", pagi);
+        q.setParameter("estaPerm", 1);
+        List resu = q.getResultList();
+        return resu.isEmpty() ? null : (Permiso)resu.get(0);
+    }
 }

@@ -20,14 +20,16 @@ import javax.faces.view.ViewScoped;
 import org.primefaces.context.RequestContext;
 
 /**
- *
- * @author aleso
+ * Esta clase se encarga de manejar lo relacionado al CRUD de páginas
+ * @author: AGAV Team
+ * @version: Prototipo 1
  */
+
 @Named(value = "paginaBean")
 @ViewScoped
 @ManagedBean
 public class PaginaBean implements Serializable {
-
+    //Campos de la clase
     @EJB
     private PaginaFacadeLocal FCDEPaginas;
     
@@ -37,6 +39,8 @@ public class PaginaBean implements Serializable {
     private boolean guardar;
     private LOG4J log;
 
+    //Encapsulamiento de los campos de la clase
+    
     public PaginaFacadeLocal getFCDEPaginas() {
         return FCDEPaginas;
     }
@@ -65,9 +69,13 @@ public class PaginaBean implements Serializable {
         return guardar;
     }
     
+    //Constructor de la clase
     public PaginaBean() {
     }
     
+    /**
+     * Método que se ejecuta después de haber construido la clase e inicializa las variables
+     */
     @PostConstruct
     public void init()
     {
@@ -77,12 +85,18 @@ public class PaginaBean implements Serializable {
         log.debug("Se inicializa el modelo de Pagina");
     }
     
+    /**
+     * Método que limpia el formulario reiniciando las variables
+     */
     public void limpForm()
     {
         this.objePagi = new Pagina();
         this.guardar = true;        
     }
     
+    /**
+     * Método que guarda la información en la base datos
+     */
     public void guar()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -105,6 +119,9 @@ public class PaginaBean implements Serializable {
         }
     }
     
+    /**
+     * Método que modifica la información en la base datos
+     */
     public void modi()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -127,6 +144,9 @@ public class PaginaBean implements Serializable {
         }
     }
     
+    /**
+     * Método que consulta la información de la base datos
+     */
     public void consTodo()
     {
         try
@@ -143,6 +163,9 @@ public class PaginaBean implements Serializable {
         }
     }
     
+    /**
+     * Método que guarda la información de un registro específico de la base datos
+     */
     public void cons()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página

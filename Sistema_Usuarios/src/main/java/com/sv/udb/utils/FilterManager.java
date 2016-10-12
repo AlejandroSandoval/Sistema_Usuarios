@@ -6,7 +6,6 @@
 package com.sv.udb.utils;
 
 import com.sv.udb.controlador.LoginBean;
-import com.sv.udb.controlador.PermisoBean;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,21 +15,22 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import com.sv.udb.controlador.UsuarioRolBean;
 import com.sv.udb.modelo.Permiso;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
 /**
- *
- * @author Roberto Cerón
+ * La clase FilterManager se encarga de filtrar los permisos que tienen los usuarios del sistema
+ * @author AGAV Team
+ * @version Prototipo 1
  */
 public class FilterManager implements Filter {
     @Inject
-    private LoginBean logiBean; //Bean de session
-    String prefix; //Prefijo de la aplicación
+    //Bean de session
+    private LoginBean logiBean; 
+    //Prefijo de la aplicación
+    String prefix; 
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -40,6 +40,12 @@ public class FilterManager implements Filter {
         this.prefix = filterConfig.getServletContext().getInitParameter("prefix");  //poo ---> web.xml
     }
 
+    /**
+    * Método encargado de realizar el filtrado y redirigir a los usuarios a las páginas que le competen
+    * @param request Parámetro que recibe la petición
+    * @param response Parámetro que recibe la respuesta
+    * @param chain Parámetro que redirige al usuario a una determinada página y que realiza el filtrado
+    */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServRequ = (HttpServletRequest) request;
@@ -104,7 +110,10 @@ public class FilterManager implements Filter {
         catch (Exception e) {
         }
     }
-
+    
+    /**
+    * Sobreescribe el método destructor y finaliza el despliegue de la aplicación
+    */
     @Override
     public void destroy() {
         System.out.println("**************************************************");

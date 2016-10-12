@@ -26,14 +26,15 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
-/**
- *
- * @author aleso
+ /**
+ * Esta clase se encarga de manejar lo relacionado con los inicios/cierres de sesión
+ * @author: AGAV Team
+ * @version: Prototipo 1
  */
 @Named(value = "loginBean")
 @SessionScoped
 public class LoginBean implements Serializable {
-
+    //Campos de la clase
     @EJB
     private PermisoFacadeLocal FCDEPermiso;
 
@@ -67,6 +68,8 @@ public class LoginBean implements Serializable {
         log = new LOG4J();
         log.debug("Se inicializo el Login");
     }
+    
+    //Encapsulamiento de los campos de la clase
 
     public UsuarioRol getObjeUsua() {
         return objeUsua;
@@ -120,6 +123,9 @@ public class LoginBean implements Serializable {
         this.objePerm = objePerm;
     }
     
+    /**
+     * Método que crea la sesión
+     */
     public void creaSess()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -174,8 +180,9 @@ public class LoginBean implements Serializable {
         }
     }
     
-    
-    
+    /**
+     * Método que cierra la sesión
+     */
     public void cerrSess()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página

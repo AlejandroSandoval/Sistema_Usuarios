@@ -21,20 +21,25 @@ import javax.faces.view.ViewScoped;
 import org.primefaces.context.RequestContext;
 
 /**
- *
- * @author aleso
+ * Esta clase se encarga de manejar lo relacionado al CRUD de Permisos
+ * @author: AGAV Team
+ * @version: Prototipo 1
  */
 @Named(value = "permisoBean")
 @ManagedBean
 @ViewScoped
 public class PermisoBean implements Serializable {
+    //Campos de la clase
     @EJB
     private PermisoFacadeLocal FCDEPermiso;    
     private Permiso objePerm;
+    private Permiso objeVali;
     private List<Permiso> listPerm;
     private boolean guardar;
     private List<String> valores;
     private LOG4J log;
+    
+    //Encapsulamiento de los campos de la clas
     
     public Permiso getObjePerm() {
         return objePerm;
@@ -68,12 +73,15 @@ public class PermisoBean implements Serializable {
         this.valores = valores;
     }
 
-    /**
-     * Creates a new instance of PermisoBean
+   /**
+     * Constructor de la clase Permiso
      */
     public PermisoBean() {
     }
     
+    /**
+     * Método que se ejecuta después de la construcción del Bean e inicializa las variables
+     */
     @PostConstruct
     public void init()
     {
@@ -84,6 +92,9 @@ public class PermisoBean implements Serializable {
         log.debug("Se inicializa el modelo de Permiso");
     }
     
+    /**
+     * Método que limpia el formulario reiniciando las variables
+     */
     public void limpForm()
     {
         this.objePerm = new Permiso();
@@ -91,6 +102,10 @@ public class PermisoBean implements Serializable {
         this.preSeleChkb(0);
     }
    
+    /**
+    * Método que lee el arrayList donde se guardan los valores de los permisos y los hace un solo número
+    * @return el valor del permiso que se guardará en la base de datos
+    */
     public int getValoSuma()
     {
         int suma = 0;
@@ -101,6 +116,10 @@ public class PermisoBean implements Serializable {
         return suma;
     }
     
+    /**
+     * Método que define el valor a "checked" de los checkbox al consultar permisos de un rol
+     * @param valor número entre 1 y 7 que define el valor de los permisos del rol 
+     */
     public void preSeleChkb(int valor)
     {
         if(!this.valores.isEmpty())
@@ -138,17 +157,39 @@ public class PermisoBean implements Serializable {
         }
     }
     
+    /**
+    * Método que valida si ya existe un registro ingresado
+    * @return el valor de true = si no hay registros duplicados y false = si hay registros duplicados para posteriormente mostrar un error
+    */
+    public boolean valiUsuaRole()
+    {
+        boolean resp = true;
+        this.objeVali = FCDEPermiso.findByRolePagi(this.objePerm.getCodiRole(), this.objePerm.getCodiPagi());
+        if(this.objeVali != null)
+            resp = (this.objeVali.getCodiPerm()== this.objePerm.getCodiPerm()) ? true : false;
+        return resp;
+    }
+    
+     /**
+     * Método que guarda la información en la base datos
+     */
     public void guar()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.objePerm.setValoPerm(getValoSuma());
-            FCDEPermiso.create(this.objePerm);
-            this.listPerm.add(this.objePerm);
-            log.info("Permiso creado: "+this.objePerm.getCodiRole().getNombRole()+" - "+this.objePerm.getValoPerm());
-            ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
-            this.limpForm();
+            if(valiUsuaRole())
+            {
+                this.objePerm.setValoPerm(getValoSuma());
+                FCDEPermiso.create(this.objePerm);
+                this.listPerm.add(this.objePerm);
+                log.info("Permiso creado: "+this.objePerm.getCodiRole().getNombRole()+" - "+this.objePerm.getValoPerm());
+                ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
+            }
+            else
+            {
+                ctx.execute("setMessage('MESS_WARN', 'Atención', 'Datos ya registrados')"); 
+            }
         }
         catch(Exception ex)
         {
@@ -161,17 +202,27 @@ public class PermisoBean implements Serializable {
         }
     }
     
+    /**
+     * Método que modifica la información en la base datos
+     */
     public void modi()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.objePerm.setValoPerm(getValoSuma());
-            this.listPerm.remove(this.objePerm); //Limpia el objeto viejo
-            FCDEPermiso.edit(this.objePerm);
-            this.listPerm.add(this.objePerm); //Agrega el objeto modificado
-            log.info("Permiso modificado: "+this.objePerm.getCodiPerm());
-            ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
+            if(valiUsuaRole())
+            {
+                this.objePerm.setValoPerm(getValoSuma());
+                this.listPerm.remove(this.objePerm); //Limpia el objeto viejo
+                FCDEPermiso.edit(this.objePerm);
+                this.listPerm.add(this.objePerm); //Agrega el objeto modificado
+                log.info("Permiso modificado: "+this.objePerm.getCodiPerm());
+                ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos Modificados')");
+            }
+            else
+            {
+                ctx.execute("setMessage('MESS_WARN', 'Atención', 'Datos ya registrados')"); 
+            }
         }
         catch(Exception ex)
         {
@@ -184,6 +235,9 @@ public class PermisoBean implements Serializable {
         }
     }
     
+    /**
+     * Método que consulta la información de la base datos
+     */
     public void consTodo()
     {
         try
@@ -199,6 +253,10 @@ public class PermisoBean implements Serializable {
             
         }
     }    
+    
+    /**
+     * Método que consulta la información de un registro específico de la base datos
+     */
     public void cons()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página

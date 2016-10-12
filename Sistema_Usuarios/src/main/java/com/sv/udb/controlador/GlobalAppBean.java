@@ -15,19 +15,25 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 /**
- *
- * @author Mauricio
+ * Esta clase contiene métodos que son utilizados en todo el sistema
+ * @author: AGAV Team
+ * @version: Prototipo 1
  */
 @Named(value = "globalAppBean")
 @ApplicationScoped
 public class GlobalAppBean {
 
     /**
-     * Creates a new instance of GlobalAppBean
+     * Constructor de la clase
      */
     public GlobalAppBean() {
     }
-        
+    
+    /**
+     * Método que devuelve la ruta completa de una página dentro sistema
+     * @param page el nombre de la página que se quiere encontrar
+     * @return la ruta de la ubicación de la página
+     */
     public String getUrl(String page)
     {
         String resp;
@@ -37,6 +43,11 @@ public class GlobalAppBean {
         return resp;
     }
     
+    /**
+     * Método que devuelve la ruta completa de un archivo dentro del servidor
+     * @param file el nombre del archivo que se quiere encontrar
+     * @return la ruta completa de la ubicación del archivo
+     */
     public String getResourcePath(String file)
     {
         String resp;      

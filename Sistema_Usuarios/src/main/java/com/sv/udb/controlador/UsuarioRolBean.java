@@ -20,13 +20,14 @@ import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
- *
- * @author REGISTRO
+ * Esta clase se encarga de manejar lo relacionado al CRUD de la tabla de asignación UsuarioRol
+ * @author: AGAV Team
+ * @version: Prototipo 1
  */
 @Named(value = "usuarioRolBean")
 @SessionScoped
 public class UsuarioRolBean implements Serializable {
-
+    //Campos de la clase
     @EJB
     private UsuarioRolFacadeLocal FCDEUsuaRole;
     
@@ -40,6 +41,8 @@ public class UsuarioRolBean implements Serializable {
     private boolean guardar;
     private LOG4J log;
 
+    //Encapsulamiento de los campos de la clase
+    
     public UsuarioRol getObjeUsuaRole() {
         return objeUsuaRole;
     }
@@ -64,12 +67,15 @@ public class UsuarioRolBean implements Serializable {
         return listUsua;
     }
     
-    
-
-    
+    /**
+     * Constructor de la clase UsuarioRolBean
+     */
     public UsuarioRolBean() {
     }
     
+    /**
+     * Método que se ejecuta después de la construcción de la clase e inicializa las variables
+     */
     @PostConstruct
     public void init()
     {
@@ -79,12 +85,19 @@ public class UsuarioRolBean implements Serializable {
         log.debug("Se inicializa el modelo de UsuarioRol");
     }
     
+    /**
+     * Método que limpia el formulario reiniciando las variables
+     */
     public void limpForm()
     {
         this.objeUsuaRole = new UsuarioRol();
         this.guardar = true;        
     }
     
+    /**
+    * Método que valida si ya existe un registro ingresado
+    * @return el valor de true = si no hay registros duplicados y false = si hay registros duplicados para posteriormente mostrar un error
+    */
     public boolean valiUsuaRole()
     {
         boolean resp = true;
@@ -94,6 +107,9 @@ public class UsuarioRolBean implements Serializable {
         return resp;
     }
     
+    /**
+     * Método que guarda la información en la base de datos
+     */
     public void guar()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -123,6 +139,9 @@ public class UsuarioRolBean implements Serializable {
         }
     }
     
+    /**
+     * Método que modifica la información en la base de datos
+     */
     public void modi()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
@@ -149,6 +168,9 @@ public class UsuarioRolBean implements Serializable {
         }
     }
     
+    /**
+     * Método que consulta la información de la base de datos
+     */
     public void consTodo()
     {
         try
@@ -166,6 +188,9 @@ public class UsuarioRolBean implements Serializable {
         }
     }
     
+    /**
+     * Método que consutla la información de un registro en específico de la base de datos
+     */
     public void cons()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página

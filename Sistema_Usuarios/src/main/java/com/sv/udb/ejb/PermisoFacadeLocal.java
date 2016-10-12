@@ -27,6 +27,8 @@ public interface PermisoFacadeLocal {
     List<Permiso> findAll();
     
     List<Permiso> findByRole(Object role);
+    
+    Permiso findByRolePagi(Object role, Object pagi);
 
     List<Permiso> findRange(int[] range);
 
