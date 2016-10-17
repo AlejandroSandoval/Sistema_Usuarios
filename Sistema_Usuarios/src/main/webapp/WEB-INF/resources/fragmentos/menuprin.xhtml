@@ -42,6 +42,7 @@ and open the template in the editor.
                             <ui:repeat var="item" value="#{loginBean.listPerm}">
                                 <li class=""><h:link outcome="#{item.codiPagi.nombPagi}"><i class="fa fa-user"></i> #{item.codiPagi.nombPagi}</h:link></li> 
                             </ui:repeat>
+                            <li class=""><h:link outcome="backups"><i class="fa fa-user"></i> Backups</h:link></li>
                             <!--
                             <li class="{actiUsuaRole}"><h:link outcome="usuariorol"><i class="fa fa-user"></i> Usuario Roles</h:link></li>
                             <li class="{actiConfig}"><h:link outcome="config"><i class="fa fa-cogs"></i> Configuración</h:link></li>

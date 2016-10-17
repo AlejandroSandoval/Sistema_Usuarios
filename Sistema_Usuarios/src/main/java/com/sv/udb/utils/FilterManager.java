@@ -61,6 +61,7 @@ public class FilterManager implements Filter {
         initPage.add(nombCtxt + "login.xhtml");
         accePage.add(httpServRequ.getContextPath() + "/");
         accePage.add(nombCtxt + "index.xhtml");
+        accePage.add(nombCtxt + "backups.xhtml");
         List<String> ignoPageFilt = new ArrayList<>(); //Páginas ignoradas por el filtro
         ignoPageFilt.addAll(initPage);
         ignoPageFilt.add(nombCtxt + "otra.xhtml");
